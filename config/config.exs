@@ -10,7 +10,9 @@ import Config
 config :holobot,
   http: [port: {:system, "PORT"}],
   bot_name: "a_chan_bot",
-  holofans_api: "https://api.holotools.app/"
+  holofans_api: "https://api.holotools.app/",
+  # A list of webhook URLs to send push notifications to
+  golive_webhooks: ["https://7fb99272f34e7c27e071947e05dac2e8.m.pipedream.net"]
 
 # Configures Elixir's Logger
 config :logger, :console,

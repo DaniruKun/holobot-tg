@@ -1,5 +1,5 @@
 defmodule Holobot.Telegram.Router do
-  @bot_name Application.get_env(:holobot, :bot_name)
+  @bot_name Application.fetch_env!(:holobot, :bot_name)
 
   # Code injectors
 

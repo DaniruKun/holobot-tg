@@ -19,7 +19,7 @@ defmodule Holobot.Holofans.Video do
     index: [:title],
     type: :set
 
-  @spec build_record(map) :: struct()
+  @spec build_record(map) :: %__MODULE__{}
   def build_record(video) do
     %__MODULE__{
       yt_video_key: video["yt_video_key"],

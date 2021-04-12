@@ -5,6 +5,8 @@ defmodule Holobot.Helpers do
   Functions that are not strictly related to Holofans or Telegram domains.
   """
 
+  require Logger
+
   @spec tokenize(binary) :: [binary]
   defdelegate tokenize(text), to: __MODULE__, as: :tokenize_msg
 
@@ -101,5 +103,36 @@ defmodule Holobot.Helpers do
     |> String.replace(~r/[[:punct:]]/, "")
     |> String.downcase()
     |> String.split()
+  end
+
+  @doc """
+  Sends a JSON POST golive notification to all configured webhooks with the video info.
+  """
+  @spec send_golive_push!(%Holobot.Holofans.Video{
+          channel: binary(),
+          live_start: binary()
+        }) :: list()
+  def send_golive_push!(video) do
+    webhooks = Application.fetch_env!(:holobot, :golive_webhooks)
+
+    Logger.info("Channel #{video.channel} just went live!")
+
+    for webhook <- webhooks do
+      data =
+        Jason.encode!(%{
+          status: "golive",
+          channelId: video.channel,
+          live_start_time: video.live_start
+        })
+
+      case HTTPoison.post(webhook, data, [{"Content-Type", "application/json"}]) do
+        {:ok, resp} ->
+          Logger.info("Pushed GoLive notification to subscriber: [#{webhook}]")
+          resp
+
+        {:error, %HTTPoison.Error{reason: reason}} ->
+          Logger.error(reason)
+      end
+    end
   end
 end
